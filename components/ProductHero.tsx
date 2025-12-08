@@ -1,0 +1,91 @@
+import Image from 'next/image';
+import { ProductData } from '@/lib/types';
+
+const shortTitle = (title:string) =>title.split(' ').slice(0,4).join(' ');
+
+interface ProductHeroProps {
+  productA: ProductData;
+  productB: ProductData;
+}
+
+export function ProductHero({ productA, productB }: ProductHeroProps) {
+  return (
+    <div className="bg-white rounded-xl shadow-lg p-8 mb-6">
+      <h1 className="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-8">
+        {shortTitle(productA.title)} vs {shortTitle(productB.title)}
+      </h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="flex flex-col items-center">
+          <div className="relative w-full aspect-square max-w-sm mb-4 bg-slate-50 rounded-lg overflow-hidden">
+            {productA.imageUrl ? (
+              <Image
+                src={productA.imageUrl}
+                alt={productA.title}
+                fill
+                className="object-contain p-4"
+                unoptimized
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-slate-400">
+                画像なし
+              </div>
+            )}
+          </div>
+          <h2 className="text-xl font-bold text-slate-900 text-center mb-2">
+            {productA.title}
+          </h2>
+          <p className="text-3xl font-bold text-slate-700">
+            {productA.price}
+          </p>
+          <div className="text-center mt-2 text-slate-700">
+  {productA.rating && (
+    <div className="flex items-center justify-center gap-1 mt-1">
+      <span className="text-yellow-500 text-3xl leading-none">⭐</span>
+      <span className="text-xl font-bold text-slate-800">
+        {productA.rating}/5
+      </span>
+    </div>
+  )}
+</div>
+
+        </div>
+
+        <div className="flex flex-col items-center">
+          <div className="relative w-full aspect-square max-w-sm mb-4 bg-slate-50 rounded-lg overflow-hidden">
+            {productB.imageUrl ? (
+              <Image
+                src={productB.imageUrl}
+                alt={productB.title}
+                fill
+                className="object-contain p-4"
+                unoptimized
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-slate-400">
+                画像なし
+              </div>
+            )}
+          </div>
+          <h2 className="text-xl font-bold text-slate-900 text-center mb-2">
+            {productB.title}
+          </h2>
+          <p className="text-3xl font-bold text-slate-700">
+            {productB.price}
+          </p>
+          <div className="text-center mt-2 text-slate-700">
+  {productB.rating && (
+    <div className="flex items-center justify-center gap-1 mt-1">
+      <span className="text-yellow-500 text-3xl leading-none">⭐</span>
+      <span className="text-xl font-bold text-slate-800">
+        {productB.rating}/5
+      </span>
+    </div>
+  )}
+</div>
+
+        </div>
+      </div>
+    </div>
+  );
+}
