@@ -1,7 +1,9 @@
 import Image from 'next/image';
 import { ProductData } from '@/lib/types';
+import { Button } from '@/components/ui/button';
+import { ExternalLink } from 'lucide-react';
 
-const shortTitle = (title:string) =>title.split(' ').slice(0,4).join(' ');
+const shortTitle = (title: string) => title.split(' ').slice(0, 4).join(' ');
 
 interface ProductHeroProps {
   productA: ProductData;
@@ -39,15 +41,24 @@ export function ProductHero({ productA, productB }: ProductHeroProps) {
             {productA.price}
           </p>
           <div className="text-center mt-2 text-slate-700">
-  {productA.rating && (
-    <div className="flex items-center justify-center gap-1 mt-1">
-      <span className="text-yellow-500 text-3xl leading-none">⭐</span>
-      <span className="text-xl font-bold text-slate-800">
-        {productA.rating}/5
-      </span>
-    </div>
-  )}
-</div>
+            {productA.rating && (
+              <div className="flex items-center justify-center gap-1 mt-1">
+                <span className="text-yellow-500 text-3xl leading-none">⭐</span>
+                <span className="text-xl font-bold text-slate-800">
+                  {productA.rating}/5
+                </span>
+              </div>
+            )}
+          </div>
+          <div className="mt-4">
+            <Button
+              onClick={() => window.open(productA.url, '_blank')}
+              className="bg-[#FF9900] hover:bg-[#FF9900]/90 text-white font-bold"
+            >
+              <span className="mr-2">Amazonで開く</span>
+              <ExternalLink className="w-4 h-4" />
+            </Button>
+          </div>
 
         </div>
 
@@ -74,15 +85,24 @@ export function ProductHero({ productA, productB }: ProductHeroProps) {
             {productB.price}
           </p>
           <div className="text-center mt-2 text-slate-700">
-  {productB.rating && (
-    <div className="flex items-center justify-center gap-1 mt-1">
-      <span className="text-yellow-500 text-3xl leading-none">⭐</span>
-      <span className="text-xl font-bold text-slate-800">
-        {productB.rating}/5
-      </span>
-    </div>
-  )}
-</div>
+            {productB.rating && (
+              <div className="flex items-center justify-center gap-1 mt-1">
+                <span className="text-yellow-500 text-3xl leading-none">⭐</span>
+                <span className="text-xl font-bold text-slate-800">
+                  {productB.rating}/5
+                </span>
+              </div>
+            )}
+          </div>
+          <div className="mt-4">
+            <Button
+              onClick={() => window.open(productB.url, '_blank')}
+              className="bg-[#FF9900] hover:bg-[#FF9900]/90 text-white font-bold"
+            >
+              <span className="mr-2">Amazonで開く</span>
+              <ExternalLink className="w-4 h-4" />
+            </Button>
+          </div>
 
         </div>
       </div>

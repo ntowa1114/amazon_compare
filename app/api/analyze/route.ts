@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
 スペック: ${JSON.stringify(productA.specifications)}
 特徴: ${JSON.stringify(productA.features)}
 カテゴリー: ${productA.category}
+AIレビュー要約: ${productA.aiReviewSummary || "情報なし"}
 
 【製品B】
 タイトル: ${productB.title}
@@ -43,13 +44,21 @@ export async function POST(request: NextRequest) {
 スペック: ${JSON.stringify(productB.specifications)}
 特徴: ${JSON.stringify(productB.features)}
 カテゴリー: ${productB.category}
+AIレビュー要約: ${productB.aiReviewSummary || "情報なし"}
 
 【タスク】
-1. 2つの製品が大きく異なるジャンル（例：冷蔵庫とイヤホン）か判定してください (isDivergent)。
-2. 比較すべき項目（価格、サイズ、重量、スペック上の重要項目など）を抽出し、比較表のデータを作成してください。
+1. 2つの製品が大きく異なるジャンル（例：冷蔵庫とイヤホン）か判定してください (isDivergent)。その際、ワイヤレスイヤホンと有線イヤホンなどの似た商品は同じジャンルと判断してください。
+2. 比較すべき項目（価格、サイズ、重量、スペック上の重要項目など）を抽出してください。
+   -ジャンルが乖離している場合はどんな商品でも比較できる項目を抽出しなさい。（価格、商品のメーカーやブランド、商品のレビュー数、レビュー評価は乖離していても比較可能だと思います。）
+   -ジャンルが似ている場合、価格、サイズ、重量、スペックなどの項目を「購入者が何に注目して購入するか」を考慮して抽出してください。
+   
+3. 比較表のデータを作成してください。
+   - 必須項目としてどんな商品にも存在する「価格」「レビュー評価」を表の先頭に優先表記して比較する
+   - 表記順序は価格>レビュー評価>メーカー（比較している商品のメーカーが異なる場合）>サイズやスペックなどの抽出した重要項目
    - 数値比較できるものは優劣を判定してください (superiority: 'a' | 'b' | 'equal' | 'none')。
    - 数値が良い方が優れているとは限らない場合（例：サイズ）は文脈のみで判断せず、一般論に従ってください（コンパクトさが売りの場合は小さい方が勝ち、など）。不明なら 'none'。
-3. どちらがおすすめか、理由とともにアドバイスを作成してください。
+4. 片方に「不明」の項目が存在する場合は再度、比較するべき項目を抽出できるように検索を行い、該当データを探してください。（例：製品Aの最大駆動時間が判明しているのに製品Bの最大駆動時間データが不明の場合）再検索を行っても不明な場合は「不明」として優劣（色付け）をつけないでください。
+5. どちらがおすすめか、理由とともにアドバイスを作成してください。
 
 【出力フォーマット】
 以下のJSONのみを返してください。Markdownブロックは不要です。
@@ -93,6 +102,12 @@ export async function POST(request: NextRequest) {
         }
 
         const result = JSON.parse(content);
+
+        // Inject raw AI review summaries
+        result.reviewSummaries = {
+            summaryA: productA.aiReviewSummary || "レビュー要約情報なし",
+            summaryB: productB.aiReviewSummary || "レビュー要約情報なし",
+        };
 
         return NextResponse.json(result);
     } catch (error) {

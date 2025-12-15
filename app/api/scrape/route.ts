@@ -26,10 +26,10 @@ export async function POST(request: NextRequest) {
     const $ = cheerio.load(html);
 
     const title = $('#productTitle').text().trim() ||
-                  $('h1.product-title').text().trim() ||
-                  $('span#productTitle').text().trim() ||
-                  '取得不可';
-    
+      $('h1.product-title').text().trim() ||
+      $('span#productTitle').text().trim() ||
+      '取得不可';
+
     let price = '';
     let priceValue: number | null = null;
 
@@ -58,52 +58,52 @@ export async function POST(request: NextRequest) {
       price = '取得不可';
     }
 
-    let rating= '';
+    let rating = '';
 
-    const ratingSelectors =[
+    const ratingSelectors = [
       'span[data-hook="rating- out-text"]',
       'i.a-icon-star span',
       'span.a-icon-alt'
 
     ];
 
-    for(const selector of ratingSelectors){
+    for (const selector of ratingSelectors) {
       const ratingText = $(selector).first().text().trim();
-      if(ratingText){
+      if (ratingText) {
         rating = ratingText
-          .replace(/5つ星のうち/i,"")
-          .replace(/[_s★]+/g,'')
+          .replace(/5つ星のうち/i, "")
+          .replace(/[_s★]+/g, '')
           .trim();
         break;
       }
     }
 
     const imageUrl = $('#landingImage').attr('src') ||
-                     $('img[data-old-hires]').attr('data-old-hires') ||
-                     $('#imgBlkFront').attr('src') ||
-                     $('.a-dynamic-image').first().attr('src') ||
-                     '';
+      $('img[data-old-hires]').attr('data-old-hires') ||
+      $('#imgBlkFront').attr('src') ||
+      $('.a-dynamic-image').first().attr('src') ||
+      '';
 
     const asin = url.match(/\/dp\/([A-Z0-9]{10})/)?.[1] ||
-                 url.match(/\/gp\/product\/([A-Z0-9]{10})/)?.[1] ||
-                 $('input[name="ASIN"]').val() as string ||
-                 '';
+      url.match(/\/gp\/product\/([A-Z0-9]{10})/)?.[1] ||
+      $('input[name="ASIN"]').val() as string ||
+      '';
 
     let brand = '';
     $('#bylineInfo').each((_, el) => {
       let text = $(el).text().trim();
-      text=text
+      text = text
         .replace(/^(ブランド:|Brand:)\s*/i, '')
         .replace(/のストアを表示$/i, '')
         .replace(/^Visit the\s+/i, '')
         .replace(/\s+Store$/i, '');
-        brand=text.trim();
+      brand = text.trim();
     });
 
     if (!brand) {
       brand = $('.po-brand .po-break-word').text().trim() ||
-              $('a#bylineInfo').text().trim() ||
-              '取得不可';
+        $('a#bylineInfo').text().trim() ||
+        '取得不可';
     }
 
     const specifications: Record<string, string> = {};
@@ -154,6 +154,47 @@ export async function POST(request: NextRequest) {
     });
     const category = categories.length > 0 ? categories.join(' > ') : '取得不可';
 
+    // AI Review Summary Extraction
+    let aiReviewSummary: string | null = null;
+
+    // Check for specific data hook first (most reliable if present)
+    const aiSummaryBlock = $('div[data-hook="cr-ai-summary-block"], div[data-hook="cr-sol-summary-block"]');
+    if (aiSummaryBlock.length > 0) {
+      aiReviewSummary = aiSummaryBlock.find('p').first().text().trim() || aiSummaryBlock.text().trim();
+    }
+
+    // Fallback: Search for headers and get following text
+    if (!aiReviewSummary) {
+      const summaryHeaders = [
+        "お客様のご意見",
+        "AIによるカスタマーレビュー要約",
+        "Customers say",
+        "Customer opinions"
+      ];
+
+      for (const headerText of summaryHeaders) {
+        // Find elements containing the header text
+        const header = $(`h3:contains("${headerText}"), span:contains("${headerText}"), div:contains("${headerText}")`).filter((_, el) => $(el).text().trim().includes(headerText)).first();
+
+        if (header.length > 0) {
+          // Try to find the content in the next sibling or parent's next sibling
+          let content = header.next('p, div').text().trim();
+          if (!content) {
+            content = header.parent().next().find('p').first().text().trim();
+          }
+          if (!content) {
+            content = header.parent().find('p').not(header).first().text().trim();
+          }
+
+          if (content && content.length > 20) { // arbitrary length check to avoid garbage
+            aiReviewSummary = content;
+            break;
+          }
+        }
+      }
+    }
+
+
     const productData: ProductData = {
       title,
       price,
@@ -165,6 +206,8 @@ export async function POST(request: NextRequest) {
       features,
       category,
       rating,
+      url,
+      aiReviewSummary,
     };
 
     return NextResponse.json(productData);

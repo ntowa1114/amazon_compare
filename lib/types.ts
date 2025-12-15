@@ -9,6 +9,8 @@ export interface ProductData {
   features: string[];
   category: string;
   rating: string;
+  url: string;
+  aiReviewSummary?: string | null;
 }
 
 export interface NormalizedSpec {
@@ -39,6 +41,10 @@ export interface ComparisonResult {
   commentary: {
     productA: string;
     productB: string;
+  };
+  reviewSummaries?: {
+    summaryA: string;
+    summaryB: string;
   };
   advice?: Advice;
 }
