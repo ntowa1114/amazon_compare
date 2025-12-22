@@ -63,12 +63,28 @@ export default function ComparePage() {
         const analysisData = await response.json();
 
         // 3. Construct Result
+        // Merge structured ratings into product data if available
+        const enhancedProductA = { ...productA };
+        const enhancedProductB = { ...productB };
+
+        if (analysisData.structuredRatings) {
+          if (analysisData.structuredRatings.productA) {
+            enhancedProductA.ratingValue = analysisData.structuredRatings.productA.ratingValue;
+            enhancedProductA.reviewCount = analysisData.structuredRatings.productA.reviewCount;
+          }
+          if (analysisData.structuredRatings.productB) {
+            enhancedProductB.ratingValue = analysisData.structuredRatings.productB.ratingValue;
+            enhancedProductB.reviewCount = analysisData.structuredRatings.productB.reviewCount;
+          }
+        }
+
         const fullResult: ComparisonResult = {
-          productA,
-          productB,
+          productA: enhancedProductA,
+          productB: enhancedProductB,
           comparisonItems: analysisData.comparisonItems,
           isDivergent: analysisData.isDivergent,
           reviewSummaries: analysisData.reviewSummaries,
+          structuredRatings: analysisData.structuredRatings,
           advice: analysisData.advice,
           commentary: { productA: '', productB: '' } // Legacy field kept empty
         };

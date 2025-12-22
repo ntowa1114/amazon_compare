@@ -58,7 +58,8 @@ AIレビュー要約: ${productB.aiReviewSummary || "情報なし"}
    - 数値比較できるものは優劣を判定してください (superiority: 'a' | 'b' | 'equal' | 'none')。
    - 数値が良い方が優れているとは限らない場合（例：サイズ）は文脈のみで判断せず、一般論に従ってください（コンパクトさが売りの場合は小さい方が勝ち、など）。不明なら 'none'。
 4. 片方に「不明」の項目が存在する場合は再度、比較するべき項目を抽出できるように検索を行い、該当データを探してください。（例：製品Aの最大駆動時間が判明しているのに製品Bの最大駆動時間データが不明の場合）再検索を行っても不明な場合は「不明」として優劣（色付け）をつけないでください。
-5. どちらがおすすめか、理由とともにアドバイスを作成してください。
+5. 比較表の「レビュー評価」項目とは別に、正確な数値として「星の数（ratingValue）」と「レビュー件数（reviewCount）」を抽出してください。製品ページのテキスト情報から探してください。不明な場合は null セットしてください。
+6. どちらがおすすめか、理由とともにアドバイスを作成してください。
 
 【出力フォーマット】
 以下のJSONのみを返してください。Markdownブロックは不要です。
@@ -73,6 +74,10 @@ AIレビュー要約: ${productB.aiReviewSummary || "情報なし"}
       "superiority": "a" | "b" | "equal" | "none"
     }
   ],
+  "structuredRatings": {
+      "productA": { "ratingValue": number | null, "reviewCount": number | null },
+      "productB": { "ratingValue": number | null, "reviewCount": number | null }
+  },
   "advice": {
     "winner": "a" | "b" | "tie",
     "reason": "勝者の理由（簡潔に）",

@@ -210,6 +210,10 @@ export async function POST(request: NextRequest) {
       aiReviewSummary,
     };
 
+    console.log(`\n=== Scraped Data for ${title} ===`);
+    console.log(JSON.stringify(productData, null, 2));
+    console.log('=====================================\n');
+
     return NextResponse.json(productData);
   } catch (error) {
     console.error('Scraping error:', error);

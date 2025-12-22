@@ -11,6 +11,40 @@ interface ProductHeroProps {
 }
 
 export function ProductHero({ productA, productB }: ProductHeroProps) {
+  const renderRating = (product: ProductData) => {
+    if (product.ratingValue) {
+      return (
+        <div className="flex items-center justify-center gap-1 mt-1">
+          <span className="text-yellow-500 text-3xl leading-none">⭐</span>
+          <span className="text-xl font-bold text-slate-800">
+            {product.ratingValue}
+          </span>
+          <span className="text-sm text-slate-500 ml-1">
+            ({product.reviewCount?.toLocaleString() ?? 0}件)
+          </span>
+        </div>
+      );
+    }
+
+    // Fallback for legacy string format or unknown
+    if (product.rating && product.rating !== '不明' && product.rating !== '取得不可') {
+      return (
+        <div className="flex items-center justify-center gap-1 mt-1">
+          <span className="text-yellow-500 text-3xl leading-none">⭐</span>
+          <span className="text-xl font-bold text-slate-800">
+            {product.rating}
+          </span>
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex items-center justify-center gap-1 mt-1">
+        <span className="text-sm font-medium text-slate-400">不明</span>
+      </div>
+    );
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-lg p-8 mb-6">
       <h1 className="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-8">
@@ -41,14 +75,7 @@ export function ProductHero({ productA, productB }: ProductHeroProps) {
             {productA.price}
           </p>
           <div className="text-center mt-2 text-slate-700">
-            {productA.rating && (
-              <div className="flex items-center justify-center gap-1 mt-1">
-                <span className="text-yellow-500 text-3xl leading-none">⭐</span>
-                <span className="text-xl font-bold text-slate-800">
-                  {productA.rating}/5
-                </span>
-              </div>
-            )}
+            {renderRating(productA)}
           </div>
           <div className="mt-4">
             <Button
@@ -85,14 +112,7 @@ export function ProductHero({ productA, productB }: ProductHeroProps) {
             {productB.price}
           </p>
           <div className="text-center mt-2 text-slate-700">
-            {productB.rating && (
-              <div className="flex items-center justify-center gap-1 mt-1">
-                <span className="text-yellow-500 text-3xl leading-none">⭐</span>
-                <span className="text-xl font-bold text-slate-800">
-                  {productB.rating}/5
-                </span>
-              </div>
-            )}
+            {renderRating(productB)}
           </div>
           <div className="mt-4">
             <Button

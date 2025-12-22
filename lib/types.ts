@@ -11,6 +11,8 @@ export interface ProductData {
   rating: string;
   url: string;
   aiReviewSummary?: string | null;
+  ratingValue?: number | null;
+  reviewCount?: number | null;
 }
 
 export interface NormalizedSpec {
@@ -47,4 +49,8 @@ export interface ComparisonResult {
     summaryB: string;
   };
   advice?: Advice;
+  structuredRatings?: {
+    productA: { ratingValue: number | null; reviewCount: number | null };
+    productB: { ratingValue: number | null; reviewCount: number | null };
+  };
 }
