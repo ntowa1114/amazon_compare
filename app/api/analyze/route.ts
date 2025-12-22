@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
 スペック: ${JSON.stringify(productA.specifications)}
 特徴: ${JSON.stringify(productA.features)}
 カテゴリー: ${productA.category}
-AIレビュー要約: ${productA.aiReviewSummary || "情報なし"}
+
 
 【製品B】
 タイトル: ${productB.title}
@@ -44,7 +44,7 @@ AIレビュー要約: ${productA.aiReviewSummary || "情報なし"}
 スペック: ${JSON.stringify(productB.specifications)}
 特徴: ${JSON.stringify(productB.features)}
 カテゴリー: ${productB.category}
-AIレビュー要約: ${productB.aiReviewSummary || "情報なし"}
+
 
 【タスク】
 1. 2つの製品が大きく異なるジャンル（例：冷蔵庫とイヤホン）か判定してください (isDivergent)。その際、ワイヤレスイヤホンと有線イヤホンなどの似た商品は同じジャンルと判断してください。
@@ -107,12 +107,6 @@ AIレビュー要約: ${productB.aiReviewSummary || "情報なし"}
         }
 
         const result = JSON.parse(content);
-
-        // Inject raw AI review summaries
-        result.reviewSummaries = {
-            summaryA: productA.aiReviewSummary || "レビュー要約情報なし",
-            summaryB: productB.aiReviewSummary || "レビュー要約情報なし",
-        };
 
         return NextResponse.json(result);
     } catch (error) {

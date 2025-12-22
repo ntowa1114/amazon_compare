@@ -154,45 +154,7 @@ export async function POST(request: NextRequest) {
     });
     const category = categories.length > 0 ? categories.join(' > ') : '取得不可';
 
-    // AI Review Summary Extraction
-    let aiReviewSummary: string | null = null;
 
-    // Check for specific data hook first (most reliable if present)
-    const aiSummaryBlock = $('div[data-hook="cr-ai-summary-block"], div[data-hook="cr-sol-summary-block"]');
-    if (aiSummaryBlock.length > 0) {
-      aiReviewSummary = aiSummaryBlock.find('p').first().text().trim() || aiSummaryBlock.text().trim();
-    }
-
-    // Fallback: Search for headers and get following text
-    if (!aiReviewSummary) {
-      const summaryHeaders = [
-        "お客様のご意見",
-        "AIによるカスタマーレビュー要約",
-        "Customers say",
-        "Customer opinions"
-      ];
-
-      for (const headerText of summaryHeaders) {
-        // Find elements containing the header text
-        const header = $(`h3:contains("${headerText}"), span:contains("${headerText}"), div:contains("${headerText}")`).filter((_, el) => $(el).text().trim().includes(headerText)).first();
-
-        if (header.length > 0) {
-          // Try to find the content in the next sibling or parent's next sibling
-          let content = header.next('p, div').text().trim();
-          if (!content) {
-            content = header.parent().next().find('p').first().text().trim();
-          }
-          if (!content) {
-            content = header.parent().find('p').not(header).first().text().trim();
-          }
-
-          if (content && content.length > 20) { // arbitrary length check to avoid garbage
-            aiReviewSummary = content;
-            break;
-          }
-        }
-      }
-    }
 
 
     const productData: ProductData = {
@@ -207,7 +169,7 @@ export async function POST(request: NextRequest) {
       category,
       rating,
       url,
-      aiReviewSummary,
+
     };
 
     console.log(`\n=== Scraped Data for ${title} ===`);

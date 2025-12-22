@@ -10,7 +10,7 @@ export interface ProductData {
   category: string;
   rating: string;
   url: string;
-  aiReviewSummary?: string | null;
+
   ratingValue?: number | null;
   reviewCount?: number | null;
 }
@@ -44,10 +44,7 @@ export interface ComparisonResult {
     productA: string;
     productB: string;
   };
-  reviewSummaries?: {
-    summaryA: string;
-    summaryB: string;
-  };
+
   advice?: Advice;
   structuredRatings?: {
     productA: { ratingValue: number | null; reviewCount: number | null };

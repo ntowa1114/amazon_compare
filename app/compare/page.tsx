@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { AlertCircle, ArrowLeft, Loader2 } from 'lucide-react';
 import { scrapeAmazonProduct } from '@/lib/fetchers/amazonScrape';
 import { ComparisonResult, ProductData } from '@/lib/types';
-import { ReviewComparisonTable } from '@/components/ReviewComparisonTable';
+
 
 export default function ComparePage() {
   const router = useRouter();
@@ -83,7 +83,7 @@ export default function ComparePage() {
           productB: enhancedProductB,
           comparisonItems: analysisData.comparisonItems,
           isDivergent: analysisData.isDivergent,
-          reviewSummaries: analysisData.reviewSummaries,
+
           structuredRatings: analysisData.structuredRatings,
           advice: analysisData.advice,
           commentary: { productA: '', productB: '' } // Legacy field kept empty
@@ -169,15 +169,7 @@ export default function ComparePage() {
           <ComparisonTable items={result.comparisonItems} />
         </div>
 
-        {result.reviewSummaries && (
-          <div className="mb-6">
-            <ReviewComparisonTable
-              reviewSummaries={result.reviewSummaries}
-              productAName={result.productA.title}
-              productBName={result.productB.title}
-            />
-          </div>
-        )}
+
 
         {result.isDivergent && (
           <Alert className="mb-6 bg-amber-50 border-amber-200">
