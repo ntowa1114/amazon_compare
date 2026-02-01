@@ -13,6 +13,7 @@ export interface ProductData {
 
   ratingValue?: number | null;
   reviewCount?: number | null;
+  customer_opinions?: string;
 }
 
 export interface NormalizedSpec {

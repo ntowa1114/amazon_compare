@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { AlertCircle, ArrowLeft, Loader2 } from 'lucide-react';
 import { scrapeAmazonProduct } from '@/lib/fetchers/amazonScrape';
 import { ComparisonResult, ProductData } from '@/lib/types';
+import { ReviewSummary } from '@/components/ReviewSummary';
 
 
 export default function ComparePage() {
@@ -164,9 +165,21 @@ export default function ComparePage() {
           <div className="mb-6">LEGACY COMMENTARY HIDDEN</div>
         )}
 
+
+
         <div className="mb-6">
           <h2 className="text-2xl font-bold text-slate-900 mb-4">各項目比較</h2>
           <ComparisonTable items={result.comparisonItems} />
+        </div>
+
+        {/* Customer Opinions Summary */}
+        <div className="mb-6">
+          <ReviewSummary
+            summaryA={result.productA.customer_opinions || ''}
+            summaryB={result.productB.customer_opinions || ''}
+            productAName={result.productA.title}
+            productBName={result.productB.title}
+          />
         </div>
 
 

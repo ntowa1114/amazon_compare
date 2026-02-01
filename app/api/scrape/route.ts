@@ -154,8 +154,61 @@ export async function POST(request: NextRequest) {
     });
     const category = categories.length > 0 ? categories.join(' > ') : '取得不可';
 
+    // Scrape Customer Opinions (AI Summary or "Customer Say")
+    let customer_opinions = '';
+    const opinionSelectors = [
+      'div[data-hook="cr-ai-generated-review-summary"]',
+      '.cr-ai-generated-summary-content',
+      'div[data-hook="ai-generated-summary"]',
+      '#product-summary',
+    ];
 
+    // 1. Try specific selectors first
+    for (const selector of opinionSelectors) {
+      const text = $(selector).text().trim();
+      if (text && text.length > 20) {
+        customer_opinions = text;
+        break;
+      }
+    }
 
+    // 2. Fallback: Search for header text "お客様のご意見" or "Customer Say"
+    if (!customer_opinions) {
+      // Find all elements that might contain the header
+      $('*').each((_, el) => {
+        // Stop if we found it
+        if (customer_opinions) return;
+
+        const elText = $(el).text().trim();
+        // Check for exact header match or close to it
+        if (elText === 'お客様のご意見' || elText === 'Customer Say') {
+          // The content is usually in the next sibling or close parent's text
+          // Try next sibling
+          let nextEl = $(el).next();
+          let content = nextEl.text().trim();
+
+          if (!content || content.length < 10) {
+            // Maybe it's in a parent's text but excluding the header title? 
+            // Or the structure is Header -> Div -> Content
+            content = $(el).parent().text().replace(elText, '').trim();
+          }
+
+          if (content && content.length > 20) {
+            customer_opinions = content;
+          }
+        }
+      });
+    }
+
+    // Cleaning
+    if (customer_opinions) {
+      customer_opinions = customer_opinions
+        .replace(/^AI generated summary/i, '')
+        .replace(/^お客様のご意見/i, '')
+        .replace(/ai お客様の投稿に基づき.*/si, '') // Remove footer disclaimer
+        .replace(/お客様の投稿に基づきAIで生成されたものです。*/si, '')
+        .trim();
+    }
 
     const productData: ProductData = {
       title,
@@ -169,7 +222,7 @@ export async function POST(request: NextRequest) {
       category,
       rating,
       url,
-
+      customer_opinions,
     };
 
     console.log(`\n=== Scraped Data for ${title} ===`);
