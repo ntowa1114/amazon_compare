@@ -34,14 +34,14 @@ export function ComparisonTable({ items }: ComparisonTableProps) {
         <table className="w-full">
           <thead>
             <tr className="bg-slate-100 border-b border-slate-200">
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700 w-1/3">
-                商品A
+              <th className="px-6 py-4 text-left text-sm font-semibold w-1/3 bg-blue-100 text-blue-900">
+                Product A
               </th>
               <th className="px-6 py-4 text-center text-sm font-semibold text-slate-700 w-1/3">
                 比較項目
               </th>
-              <th className="px-6 py-4 text-right text-sm font-semibold text-slate-700 w-1/3">
-                商品B
+              <th className="px-6 py-4 text-right text-sm font-semibold w-1/3 bg-orange-100 text-orange-900">
+                Product B
               </th>
             </tr>
           </thead>
