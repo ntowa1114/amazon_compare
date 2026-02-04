@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { ProductHero } from '@/components/ProductHero';
 import { ComparisonTable } from '@/components/ComparisonTable';
+import { TermExplanationTable } from '@/components/TermExplanationTable';
 import { AdviceSection } from '@/components/AdviceSection';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -167,40 +168,41 @@ export default function ComparePage() {
 
 
 
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-slate-900 mb-4">各項目比較</h2>
-          <ComparisonTable items={result.comparisonItems} />
+        <h2 className="text-2xl font-bold text-slate-900 mb-4">各項目比較</h2>
+        <ComparisonTable items={result.comparisonItems} />
+        <div className="mt-8">
+          <TermExplanationTable items={result.comparisonItems} />
         </div>
+      </div>
 
-        {/* Customer Opinions Summary */}
-        <div className="mb-6">
-          <ReviewSummary
-            summaryA={result.productA.customer_opinions || ''}
-            summaryB={result.productB.customer_opinions || ''}
-            productAName={result.productA.title}
-            productBName={result.productB.title}
-          />
-        </div>
+      {/* Customer Opinions Summary */}
+      <div className="mb-6">
+        <ReviewSummary
+          summaryA={result.productA.customer_opinions || ''}
+          summaryB={result.productB.customer_opinions || ''}
+          productAName={result.productA.title}
+          productBName={result.productB.title}
+        />
+      </div>
 
 
 
-        {result.isDivergent && (
-          <Alert className="mb-6 bg-amber-50 border-amber-200">
-            <AlertCircle className="h-4 w-4 text-amber-600" />
-            <AlertDescription className="text-amber-800">
-              商品のジャンルが大きく異なるため、比較項目が限定されている可能性があります。
-            </AlertDescription>
-          </Alert>
-        )}
+      {result.isDivergent && (
+        <Alert className="mb-6 bg-amber-50 border-amber-200">
+          <AlertCircle className="h-4 w-4 text-amber-600" />
+          <AlertDescription className="text-amber-800">
+            商品のジャンルが大きく異なるため、比較項目が限定されている可能性があります。
+          </AlertDescription>
+        </Alert>
+      )}
 
-        <div className="flex justify-center mt-8">
-          <Button
-            onClick={() => router.push('/')}
-            className="bg-slate-900 hover:bg-slate-800 px-8"
-          >
-            別の商品を比較する
-          </Button>
-        </div>
+      <div className="flex justify-center mt-8">
+        <Button
+          onClick={() => router.push('/')}
+          className="bg-slate-900 hover:bg-slate-800 px-8"
+        >
+          別の商品を比較する
+        </Button>
       </div>
     </div>
   );
